@@ -38,7 +38,7 @@ pytz==2024.2
 
 # === Validation & Parsing ===
 email-validator==2.1.0
-dnspython==2.7.0
+dnspython==2.8.0
 
 # === Logging & Monitoring ===
 loguru==0.7.2
