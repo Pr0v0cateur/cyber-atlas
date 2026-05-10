@@ -1,0 +1,63 @@
+# === Core Framework ===
+fastapi==0.115.0
+uvicorn[standard]==0.31.0
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# === Database ===
+sqlalchemy==2.0.35
+psycopg[binary]==3.1.18
+alembic==1.13.3
+asyncpg==0.29.0
+
+# === Search & Cache ===
+opensearch-py==2.7.1
+redis==5.1.1
+hiredis==3.0.0
+
+# === Async Tasks ===
+celery==5.4.0
+celery[redis]==5.4.0
+flower==2.0.1
+
+# === Security & Auth ===
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.12
+cryptography==43.0.1
+
+# === HTTP & APIs ===
+httpx==0.27.2
+aiohttp==3.10.10
+requests==2.32.3
+
+# === Data Processing ===
+geoip2==4.8.0
+python-dateutil==2.9.0.post0
+pytz==2024.2
+
+# === Validation & Parsing ===
+email-validator==2.1.0
+dnspython==2.7.0
+
+# === Logging & Monitoring ===
+loguru==0.7.2
+prometheus-client==0.21.0
+
+# === Utilities ===
+python-dotenv==1.0.1
+pyyaml==6.0.2
+
+# === Testing === (FIXED)
+pytest==7.4.4
+pytest-asyncio==0.23.4
+pytest-cov==5.0.0
+
+# === Additional ===
+slowapi==0.1.9
+tenacity==8.2.3
+
+# === Threat Intel ===
+stix2==3.0.1
+taxii2-client==2.3.0
+aiofiles==23.2.1

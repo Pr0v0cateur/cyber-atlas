@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Runtime files
+logs/
+*.log
+celerybeat-schedule
+celerybeat-schedule.*
+
+# Local data and database files
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker/local tooling
+.docker/
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+Desktop.ini

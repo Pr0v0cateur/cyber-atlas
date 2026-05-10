@@ -1,0 +1,431 @@
+/* =============================================================================
+   Cyber Atlas - Secondary Pages
+============================================================================= */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+    background: rgba(10, 14, 26, 0.7);
+}
+
+body.page-shell {
+    height: 100vh;
+    overflow: hidden;
+}
+
+body.page-shell .app-container {
+    height: 100vh;
+    min-height: 100vh;
+    min-width: 0;
+    min-height: 0;
+}
+
+body.page-shell .main-content {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+body.page-shell .sidebar {
+    width: 72px !important;
+    min-width: 72px !important;
+    align-items: stretch !important;
+    padding: 18px 12px !important;
+    overflow-y: auto;
+}
+
+body.page-shell .sidebar.expanded {
+    width: 248px !important;
+}
+
+body.page-shell .nav-icon {
+    color: #cbd5f5;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+body.page-shell .nav-icon svg {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.page-title {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.page-title h1 {
+    font-size: 22px;
+    color: #e2e8f0;
+    letter-spacing: 0.02em;
+}
+
+.page-title p {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.page-grid {
+    display: grid;
+    gap: 18px;
+    padding: 22px 24px 32px;
+}
+
+body.page-shell .page-grid {
+    flex: 1;
+    min-height: 0;
+}
+
+.page-grid.two-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.page-grid.three-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.page-card {
+    background: linear-gradient(180deg, rgba(15, 20, 40, 0.95), rgba(10, 14, 30, 0.95));
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 14px;
+    padding: 18px;
+    min-height: 140px;
+}
+
+body.page-shell .page-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.page-card h3 {
+    font-size: 14px;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.page-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.page-card-header h3 {
+    margin-bottom: 6px;
+}
+
+.page-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.page-filter-btn {
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5f5;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.page-filter-btn:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #e2e8f0;
+}
+
+.page-filter-btn.is-active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(139, 92, 246, 0.5));
+    border-color: rgba(139, 92, 246, 0.8);
+    color: #fff;
+}
+
+.page-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.page-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid transparent;
+}
+
+.page-row strong {
+    color: #e2e8f0;
+    font-size: 14px;
+}
+
+.page-row span {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.page-row.is-clickable {
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.page-row.is-clickable:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(30, 41, 59, 0.65);
+}
+
+.page-row.cve-row {
+    align-items: flex-start;
+}
+
+.page-row-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.page-row-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    min-width: 150px;
+}
+
+.page-subtext {
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.page-subtext.is-muted {
+    color: #64748b;
+}
+
+.page-meta {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.page-tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.page-tag.tag-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #f87171;
+}
+
+.page-tag.tag-neutral {
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.35);
+    color: #93c5fd;
+}
+
+.page-date {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.page-severity {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.page-severity.severity-critical {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.page-severity.severity-high {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.page-severity.severity-medium {
+    background: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+}
+
+.page-severity.severity-low {
+    background: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+}
+
+.page-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.page-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table-scroll {
+    max-height: calc(100vh - 260px);
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+body.page-shell .page-card .table-scroll {
+    flex: 1;
+    min-height: 0;
+}
+
+.page-table th,
+.page-table td {
+    text-align: left;
+    padding: 10px 8px;
+    color: #cbd5f5;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.08);
+}
+
+.page-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+}
+
+.page-table tr.is-clickable:hover td {
+    background: rgba(30, 41, 59, 0.35);
+    cursor: pointer;
+}
+
+.page-pagination {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.page-page-btn {
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    background: rgba(15, 23, 42, 0.6);
+    color: #cbd5f5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.page-page-btn:hover:not(:disabled) {
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #e2e8f0;
+}
+
+.page-page-btn.is-active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(139, 92, 246, 0.5));
+    border-color: rgba(139, 92, 246, 0.8);
+    color: #fff;
+}
+
+.page-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-ellipsis {
+    color: #64748b;
+    padding: 6px 4px;
+    font-size: 12px;
+}
+
+.page-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-search input {
+    flex: 1;
+    background: rgba(15, 20, 30, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: #e2e8f0;
+}
+
+.page-search button {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.page-empty {
+    padding: 16px;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    border: 1px dashed rgba(59, 130, 246, 0.15);
+    border-radius: 12px;
+}
+
+@media (max-width: 1100px) {
+    .page-grid.two-col,
+    .page-grid.three-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .page-actions {
+        flex-wrap: wrap;
+    }
+
+    .page-row.cve-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .page-row-meta {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+}
