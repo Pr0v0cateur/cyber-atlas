@@ -12,7 +12,7 @@ asyncpg==0.29.0
 
 # === Search & Cache ===
 opensearch-py==2.7.1
-redis==5.1.1
+redis==7.4.0
 hiredis==3.0.0
 
 # === Async Tasks ===
