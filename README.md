@@ -1,114 +1,175 @@
-# Cyber Atlas - Threat Intelligence Platform
+# Cyber Atlas
 
-Complete backend implementation for Cyber Atlas, a lightweight OpenCTI-inspired threat intelligence platform.
+Cyber Atlas is a threat intelligence platform built with FastAPI, PostgreSQL,
+Redis, OpenSearch, and Celery. It collects, stores, searches, and visualizes
+Indicators of Compromise, MITRE ATT&CK-related entities, vulnerability data,
+and threat intelligence feed results through an authenticated web dashboard.
 
-## 🚀 Features
+## Features
 
-- **Threat Feed Collection**: Automated collection from URLhaus, OpenPhish, MalwareBazaar, ThreatFox, AlienVault OTX, and AbuseIPDB.
-- **IOC Management**: Storing and searching Indicators of Compromise (IPs, Domains, URLs, Hashes).
-- **Enrichment**: GeoIP enrichment for IP addresses.
-- **Authentication**: JWT-based auth with refresh tokens and API Key support.
-- **Security**: Rate limiting, security headers, password policies.
-- **Background Tasks**: Celery-based task queue for feed collection and maintenance.
+- Threat feed collection from URLhaus, MalwareBazaar, ThreatFox, AlienVault OTX,
+  and AbuseIPDB.
+- IOC storage and search for IP addresses, domains, URLs, and hashes.
+- JWT authentication, refresh tokens, role-based admin functions, and API keys.
+- Dashboard views for KPIs, targeted countries, sectors, campaigns, reports,
+  malware, tools, TTPs, and active vulnerabilities.
+- PostgreSQL persistence, Redis caching/task broker, and OpenSearch indexing.
+- Celery workers and Celery Beat scheduling for background collection jobs.
+- Security middleware for rate limiting, request-size limits, and HTTP headers.
 
-## 🛠️ Technology Stack
+## Technology Stack
 
-- **Framework**: FastAPI (Async Python)
-- **Database**: PostgreSQL 16
-- **Cache**: Redis 7
-- **Search**: OpenSearch 2.11
-- **Task Queue**: Celery + Celery Beat
+- Python 3.11
+- FastAPI
+- PostgreSQL 16
+- Redis 7
+- OpenSearch 2.11
+- Celery and Celery Beat
+- Docker Compose
+- Static HTML, CSS, and JavaScript dashboard
 
-## ⚡ Quick Start
+## Project Structure
+
+```text
+cyber_atlas_backend/
+├── app/
+│   ├── connectors/      # Threat intelligence feed connectors
+│   ├── core/            # Configuration, database, logging, security
+│   ├── crud/            # Database operations
+│   ├── middleware/      # Security and request middleware
+│   ├── models/          # SQLAlchemy models
+│   ├── routes/          # API endpoints
+│   ├── schemas/         # Pydantic schemas
+│   ├── services/        # Domain services
+│   └── tasks/           # Celery tasks and scheduling
+├── frontend_static/     # Web dashboard assets
+├── alembic/             # Database migrations
+├── scripts/             # Operational scripts
+└── tests/               # Automated tests
+```
+
+## Quick Start
 
 ### Prerequisites
 
-- Docker & Docker Compose
-- Python 3.11+ (for local development)
+- Docker and Docker Compose
+- Git
+- Python 3.11+ for local development
 
-### Deployment
+### Configuration
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd cyber_atlas_backend
-   ```
+Create a local environment file from the template:
 
-2. **Configure Environment**
-   ```bash
-   cp .env.example .env
-   ```
-   Edit `.env` and replace all placeholder credentials before starting the services.
-   For production, copy `.env.production.example` and generate new passwords/secrets.
-
-3. **Start Services**
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Access the API**
-   - API Documentation: http://localhost:8000/docs
-   - Flower (Task Monitor): http://localhost:5555
-
-### 🔑 Default Credentials
-
-> **WARNING**: Change these immediately after first login!
-
-- **Admin Email**: configured by `DEFAULT_ADMIN_EMAIL`
-- **Admin Password**: configured by `DEFAULT_ADMIN_PASSWORD`
-
-## 📝 API Usage
-
-### Authentication
-Login to get an access token:
 ```bash
-POST /api/auth/login
-Content-Type: application/x-www-form-urlencoded
-
-username=admin@cyberatlas.local
-password=[YOUR_PASSWORD]
+cp .env.example .env
 ```
 
-### Search IOCs
+Edit `.env` and replace every placeholder credential before starting the
+services. Real `.env` files are intentionally ignored by Git and must never be
+committed.
+
+For production-like deployments, use `.env.production.example` as a template
+and generate new secrets for every environment.
+
+### Run With Docker Compose
+
 ```bash
-GET /api/search/iocs?q=malware&risk_min=8
-Authorization: Bearer [ACCESS_TOKEN]
+docker compose up -d
 ```
 
-### Trigger Feed Pull
+Available local services:
+
+- Dashboard: http://localhost:8000/static/dashboard.html
+- Login page: http://localhost:8000/static/index.html
+- API documentation: http://localhost:8000/docs
+- Flower task monitor: http://localhost:5555
+
+The default admin account is configured through:
+
+- `DEFAULT_ADMIN_EMAIL`
+- `DEFAULT_ADMIN_PASSWORD`
+
+Change the default password immediately after first login in any shared or
+production environment.
+
+## API Usage
+
+Authenticate with the configured admin account:
+
 ```bash
-POST /api/feeds/pull
-Authorization: Bearer [ACCESS_TOKEN]
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=admin@cyberatlas.local" \
+  -d "password=<your-password>"
 ```
 
-## 🏗️ Project Structure
+Use the returned access token for authenticated API calls:
 
-```
-cyber_atlas_backend/
-├── app/
-│   ├── core/           # Config, DB, Security
-│   ├── models/         # SQLAlchemy Models
-│   ├── schemas/        # Pydantic Schemas
-│   ├── crud/           # Database Operations
-│   ├── routes/         # API Endpoints
-│   ├── tasks/          # Celery Tasks & Collectors
-│   └── middleware/     # Security Middleware
-├── data/               # GeoIP Database (Mounted)
-└── logs/               # Application Logs
+```bash
+curl http://localhost:8000/api/search/iocs?q=malware \
+  -H "Authorization: Bearer <access-token>"
 ```
 
-## 🔒 Security Features
+Trigger feed collection:
 
-- **JWT Authentication**: HS256 with rotation.
-- **Rate Limiting**: 100 req/min default, stricter for auth.
-- **Security Headers**: HSTS, CSP, X-Frame-Options.
-- **Input Validation**: Strict Pydantic models.
-- **Container Security**: Non-root user in Docker.
+```bash
+curl -X POST http://localhost:8000/api/feeds/pull \
+  -H "Authorization: Bearer <access-token>"
+```
 
-## 🧪 Testing
+## Security
 
-Run tests locally:
+This repository is prepared to avoid accidental secret disclosure:
+
+- `.env`, `.env.production`, virtual environments, logs, caches, local data, and
+  Celery runtime files are ignored by Git.
+- Example environment files contain placeholders only.
+- A local secret scanning script is included at `scripts/secret_scan.py`.
+- GitHub Actions runs the same secret scan on pushes and pull requests.
+- Dependabot configuration is included for dependency update visibility.
+
+Run the local secret scan before pushing:
+
+```bash
+python scripts/secret_scan.py
+```
+
+For stronger local protection, install pre-commit and enable the repository
+hook:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+See `SECURITY.md` for the project security policy.
+
+## Testing
+
+Install dependencies and run tests locally:
+
 ```bash
 pip install -r requirements.txt
 pytest
 ```
+
+For a quick syntax check:
+
+```bash
+python -m compileall app tests scripts
+```
+
+## GitHub Publishing Checklist
+
+Before pushing to GitHub:
+
+1. Keep the repository private unless the thesis requires a public submission.
+2. Confirm `.env` and `.env.production` are ignored.
+3. Run `python scripts/secret_scan.py`.
+4. Rotate any credentials that were ever shared outside the local machine.
+5. Add only a remote repository that you control.
+
+## License
+
+No open-source license has been selected yet. Until a license is added, all
+rights are reserved by the project author.

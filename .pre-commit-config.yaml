@@ -1,0 +1,13 @@
+repos:
+  - repo: local
+    hooks:
+      - id: cyber-atlas-secret-scan
+        name: Cyber Atlas secret scan
+        entry: python scripts/secret_scan.py
+        language: system
+        pass_filenames: false
+      - id: python-compile
+        name: Python compile check
+        entry: python -m compileall app tests scripts
+        language: system
+        pass_filenames: false
