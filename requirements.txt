@@ -11,7 +11,7 @@ alembic==1.13.3
 asyncpg==0.29.0
 
 # === Search & Cache ===
-opensearch-py==2.7.1
+opensearch-py==3.2.0
 redis==5.1.1
 hiredis==3.0.0
 
