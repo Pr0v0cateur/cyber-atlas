@@ -5,6 +5,8 @@ Redis, OpenSearch, and Celery. It collects, stores, searches, and visualizes
 Indicators of Compromise, MITRE ATT&CK-related entities, vulnerability data,
 and threat intelligence feed results through an authenticated web dashboard.
 
+![Cyber Atlas dashboard preview](docs/assets/dashboard-preview.png)
+
 ## Features
 
 - Threat feed collection from URLhaus, MalwareBazaar, ThreatFox, AlienVault OTX,
@@ -32,20 +34,20 @@ and threat intelligence feed results through an authenticated web dashboard.
 
 ```text
 cyber_atlas_backend/
-├── app/
-│   ├── connectors/      # Threat intelligence feed connectors
-│   ├── core/            # Configuration, database, logging, security
-│   ├── crud/            # Database operations
-│   ├── middleware/      # Security and request middleware
-│   ├── models/          # SQLAlchemy models
-│   ├── routes/          # API endpoints
-│   ├── schemas/         # Pydantic schemas
-│   ├── services/        # Domain services
-│   └── tasks/           # Celery tasks and scheduling
-├── frontend_static/     # Web dashboard assets
-├── alembic/             # Database migrations
-├── scripts/             # Operational scripts
-└── tests/               # Automated tests
+|-- app/
+|   |-- connectors/      # Threat intelligence feed connectors
+|   |-- core/            # Configuration, database, logging, security
+|   |-- crud/            # Database operations
+|   |-- middleware/      # Security and request middleware
+|   |-- models/          # SQLAlchemy models
+|   |-- routes/          # API endpoints
+|   |-- schemas/         # Pydantic schemas
+|   |-- services/        # Domain services
+|   `-- tasks/           # Celery tasks and scheduling
+|-- frontend_static/     # Web dashboard assets
+|-- alembic/             # Database migrations
+|-- scripts/             # Operational scripts
+`-- tests/               # Automated tests
 ```
 
 ## Quick Start
