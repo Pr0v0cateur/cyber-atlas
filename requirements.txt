@@ -55,7 +55,7 @@ pytest-cov==5.0.0
 
 # === Additional ===
 slowapi==0.1.9
-tenacity==8.2.3
+tenacity==9.1.4
 
 # === Threat Intel ===
 stix2==3.0.1
