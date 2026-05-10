@@ -24,7 +24,7 @@ flower==2.0.1
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
 python-multipart==0.0.12
-cryptography==43.0.1
+cryptography==48.0.0
 
 # === HTTP & APIs ===
 httpx==0.27.2
