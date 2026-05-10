@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intel | Cyber Atlas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/sidebar.css?v=20260129a">
+    <link rel="stylesheet" href="css/pages.css?v=20260129a">
+</head>
+
+<body class="page-shell">
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Threat Intelligence</h1>
+                    <p>Most active threat actors, intrusion sets, and malware families.</p>
+                </div>
+            </header>
+
+            <section class="page-grid three-col" id="threats-page">
+                <div class="page-card">
+                    <h3>Most Active Threats</h3>
+                    <div id="most-active-threats-list" class="page-list"></div>
+                </div>
+                <div class="page-card">
+                    <h3>Active Intrusion Sets</h3>
+                    <div id="intrusion-sets-list" class="page-list"></div>
+                </div>
+                <div class="page-card">
+                    <h3>Active Malware</h3>
+                    <div id="active-malware-list" class="page-list"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/sidebar.js?v=20260129a"></script>
+    <script src="js/page-utils.js?v=20260115b"></script>
+    <script src="js/pages.js?v=20260129a"></script>
+</body>
+
+</html>
+
+

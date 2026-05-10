@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breach Check - Cyber Atlas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/sidebar.css?v=20260129a">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 100%);
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-height: 100vh;
+        }
+
+        .breach-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 40px;
+            background: rgba(15, 20, 25, 0.95);
+            border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            color: #4a9eff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: #4a9eff;
+        }
+
+        .breach-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .search-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .search-section h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #4a9eff 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-box-large {
+            display: flex;
+            max-width: 600px;
+            margin: 40px auto 20px;
+            background: rgba(15, 20, 25, 0.8);
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-box-large input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 20px 24px;
+            color: #e2e8f0;
+            font-size: 18px;
+            outline: none;
+        }
+
+        .search-box-large input::placeholder {
+            color: #64748b;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #4a9eff 0%, #8b5cf6 100%);
+            border: none;
+            padding: 20px 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .btn-check:hover:not(:disabled) {
+            filter: brightness(1.2);
+            transform: scale(1.02);
+        }
+
+        .btn-check:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .search-hint {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .no-breach {
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+        }
+
+        .success-icon {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            animation: successPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+        }
+
+        .no-breach h2 {
+            font-size: 42px;
+            color: #10b981;
+            margin-bottom: 16px;
+        }
+
+        .email-checked {
+            font-size: 20px;
+            color: #4a9eff;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .success-message {
+            font-size: 18px;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        #fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .breach-summary {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px;
+            background: rgba(239, 68, 68, 0.05);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+        }
+
+        .breach-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+
+        .breach-summary h2 {
+            font-size: 38px;
+            color: #ef4444;
+            margin-bottom: 16px;
+        }
+
+        .breach-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 52px;
+            font-weight: 700;
+            color: #ef4444;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .breach-cards {
+            display: grid;
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .breach-card {
+            background: rgba(15, 20, 25, 0.9);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out backwards;
+        }
+
+        .breach-card:hover {
+            border-color: rgba(74, 158, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(74, 158, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .breach-card:nth-child(1) { animation-delay: 0.1s; }
+        .breach-card:nth-child(2) { animation-delay: 0.15s; }
+        .breach-card:nth-child(3) { animation-delay: 0.2s; }
+        .breach-card:nth-child(4) { animation-delay: 0.25s; }
+        .breach-card:nth-child(5) { animation-delay: 0.3s; }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .breach-header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .breach-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: rgba(74, 158, 255, 0.1);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+        }
+
+        .breach-title-section {
+            flex: 1;
+        }
+
+        .breach-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 6px;
+        }
+
+        .breach-domain {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .breach-severity {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .severity-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 2px solid rgba(239, 68, 68, 0.5);
+        }
+
+        .severity-high {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 2px solid rgba(245, 158, 11, 0.5);
+        }
+
+        .severity-medium {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 2px solid rgba(251, 191, 36, 0.5);
+        }
+
+        .severity-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 2px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .breach-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .meta-value {
+            font-size: 16px;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .breach-description {
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .breach-data-classes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .data-class-tag {
+            background: rgba(74, 158, 255, 0.15);
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            color: #4a9eff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .breach-badges {
+            display: flex;
+            gap: 10px;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-verified {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-sensitive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-spam {
+            background: rgba(100, 116, 139, 0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 16px 24px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .breach-stats {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .breach-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .search-section h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body class="page-shell">
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar"></aside>
+        <main class="main-content">
+            <header class="breach-header">
+                <a href="dashboard.html" class="btn-back">&larr; Back to Dashboard</a>
+                <h1 style="margin: 0; font-size: 24px;">Email Breach Checker</h1>
+            </header>
+
+            <div class="breach-container">
+        <div class="search-section" id="searchSection">
+            <h1>Check Your Email</h1>
+            <p style="font-size: 18px; color: #94a3b8; margin-bottom: 40px;">
+                See if your email appears in any known data breaches
+            </p>
+
+            <div class="search-box-large">
+                <input
+                    type="email"
+                    id="emailInput"
+                    placeholder="Enter your email address..."
+                    autocomplete="email"
+                />
+                <button id="checkBtn" class="btn-check">
+                    <span id="btnText">Check</span>
+                    <span id="btnLoader" class="loader" style="display: none;"></span>
+                </button>
+            </div>
+
+            <p class="search-hint">
+                We'll search breached records from Have I Been Pwned
+            </p>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="no-breach" id="noBreach" style="display: none;">
+                <div class="success-icon">&check;</div>
+                <h2>Good News!</h2>
+                <p class="email-checked" id="emailChecked"></p>
+                <p class="success-message">
+                    This email was not found in any known data breaches.<br>
+                    Your credentials appear to be safe.
+                </p>
+                <canvas id="fireworks"></canvas>
+            </div>
+
+            <div id="breachResults" style="display: none;">
+                <div class="breach-summary">
+                    <div class="breach-icon">&#9888;</div>
+                    <h2>Breaches Detected</h2>
+                    <p class="email-checked" id="emailCheckedBreach"></p>
+
+                    <div class="breach-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="breachCount">0</span>
+                            <span class="stat-label">Total Breaches</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="totalPwned">0</span>
+                            <span class="stat-label">Accounts Exposed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="mostRecent">N/A</span>
+                            <span class="stat-label">Most Recent</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breach-cards" id="breachCards"></div>
+            </div>
+        </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/sidebar.js?v=20260129a"></script>
+    <script>
+        class BreachChecker {
+            constructor() {
+                this.emailInput = document.getElementById("emailInput");
+                this.checkBtn = document.getElementById("checkBtn");
+                this.searchSection = document.getElementById("searchSection");
+                this.resultsSection = document.getElementById("resultsSection");
+                this.noBreach = document.getElementById("noBreach");
+                this.breachResults = document.getElementById("breachResults");
+
+                this.retryDelay = 2000;
+                this.maxRetries = 5;
+
+                this.init();
+            }
+
+            init() {
+                this.emailInput.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        this.checkEmail();
+                    }
+                });
+
+                this.checkBtn.addEventListener("click", () => {
+                    this.checkEmail();
+                });
+            }
+
+            async checkEmail() {
+                const email = this.emailInput.value.trim();
+
+                if (!this.isValidEmail(email)) {
+                    alert("Please enter a valid email address");
+                    return;
+                }
+
+                this.setLoading(true);
+
+                try {
+                    const data = await this.fetchWithRetry(email);
+                    this.displayResults(email, data);
+                } catch (error) {
+                    console.error("Breach check failed:", error);
+                    this.showError(error.message);
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            async fetchWithRetry(email, attempt = 1) {
+                const url = `https://haveibeenpwned.com/unifiedsearch/${encodeURIComponent(email)}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: "GET",
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    if (response.status === 404) {
+                        return { Breaches: [], Pastes: null };
+                    }
+
+                    if (response.status === 429) {
+                        if (attempt >= this.maxRetries) {
+                            throw new Error("Rate limit exceeded. Please wait a few minutes and try again.");
+                        }
+
+                        const delay = this.retryDelay * Math.pow(2, attempt - 1);
+                        await this.sleep(delay);
+                        return this.fetchWithRetry(email, attempt + 1);
+                    }
+
+                    if (response.ok) {
+                        return await response.json();
+                    }
+
+                    throw new Error(`Failed to check breaches (Status: ${response.status})`);
+                } catch (error) {
+                    if (error.name === "TypeError") {
+                        throw new Error("Direct browser access is blocked by HIBP (CORS/auth). Use a proxy or API key.");
+                    }
+                    throw error;
+                }
+            }
+
+            displayResults(email, data) {
+                this.searchSection.style.display = "none";
+                this.resultsSection.style.display = "block";
+
+                const breaches = data.Breaches || [];
+
+                if (breaches.length === 0) {
+                    this.showNoBreach(email);
+                } else {
+                    this.showBreaches(email, breaches);
+                }
+            }
+
+            showNoBreach(email) {
+                this.noBreach.style.display = "block";
+                this.breachResults.style.display = "none";
+
+                document.getElementById("emailChecked").textContent = email;
+                this.launchFireworks();
+            }
+
+            showBreaches(email, breaches) {
+                this.noBreach.style.display = "none";
+                this.breachResults.style.display = "block";
+
+                const totalPwned = breaches.reduce((sum, b) => sum + (b.PwnCount || 0), 0);
+                const mostRecent = breaches
+                    .map((b) => new Date(b.BreachDate))
+                    .sort((a, b) => b - a)[0];
+
+                document.getElementById("emailCheckedBreach").textContent = email;
+                document.getElementById("breachCount").textContent = breaches.length;
+                document.getElementById("totalPwned").textContent = this.formatNumber(totalPwned);
+                document.getElementById("mostRecent").textContent = this.formatDate(mostRecent);
+
+                const container = document.getElementById("breachCards");
+                container.innerHTML = "";
+
+                breaches.forEach((breach) => {
+                    const card = this.createBreachCard(breach);
+                    container.appendChild(card);
+                });
+            }
+
+            createBreachCard(breach) {
+                const card = document.createElement("div");
+                card.className = "breach-card";
+
+                const severity = this.calculateSeverity(breach.PwnCount, breach.IsSensitive);
+                const description = this.stripHTML(breach.Description || "");
+
+                card.innerHTML = `
+                    <div class="breach-header-content">
+                        <img
+                            src="${breach.LogoPath || ""}"
+                            alt="${breach.Title || "Breach"}"
+                            class="breach-logo"
+                            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2256%22 height=%2256%22%3E%3Crect fill=%22%234a9eff%22 width=%2256%22 height=%2256%22/%3E%3C/svg%3E'"
+                        />
+                        <div class="breach-title-section">
+                            <div class="breach-title">${breach.Title || breach.Name || "Unknown Breach"}</div>
+                            ${breach.Domain ? `<div class="breach-domain">${breach.Domain}</div>` : ""}
+                        </div>
+                        <div class="breach-severity severity-${severity}">
+                            ${severity}
+                        </div>
+                    </div>
+
+                    <div class="breach-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Breach Date</span>
+                            <span class="meta-value">${this.formatDate(breach.BreachDate)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Accounts Affected</span>
+                            <span class="meta-value">${this.formatNumber(breach.PwnCount || 0)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Added to HIBP</span>
+                            <span class="meta-value">${this.formatDate(breach.AddedDate)}</span>
+                        </div>
+                    </div>
+
+                    <div class="breach-description">
+                        ${description.length > 250 ? description.substring(0, 250) + "..." : description}
+                    </div>
+
+                    <div class="breach-data-classes">
+                        ${(breach.DataClasses || []).map((dc) => `<span class="data-class-tag">${dc}</span>`).join("")}
+                    </div>
+
+                    <div class="breach-badges">
+                        ${breach.IsVerified ? '<span class="badge badge-verified">Verified</span>' : ""}
+                        ${breach.IsSensitive ? '<span class="badge badge-sensitive">Sensitive</span>' : ""}
+                        ${breach.IsSpamList ? '<span class="badge badge-spam">Spam List</span>' : ""}
+                    </div>
+                `;
+
+                return card;
+            }
+
+            calculateSeverity(pwnCount, isSensitive) {
+                if (isSensitive || pwnCount > 100000000) return "critical";
+                if (pwnCount > 10000000) return "high";
+                if (pwnCount > 1000000) return "medium";
+                return "low";
+            }
+
+            stripHTML(html) {
+                const div = document.createElement("div");
+                div.innerHTML = html;
+                return div.textContent || div.innerText || "";
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000000) return (num / 1000000000).toFixed(1) + "B";
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+                if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+                return num.toString();
+            }
+
+            formatDate(dateStr) {
+                if (!dateStr) return "N/A";
+                const date = new Date(dateStr);
+                if (Number.isNaN(date.getTime())) return "N/A";
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                return `${months[date.getMonth()]} ${date.getFullYear()}`;
+            }
+
+            launchFireworks() {
+                const canvas = document.getElementById("fireworks");
+                const ctx = canvas.getContext("2d");
+
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                canvas.style.display = "block";
+
+                const particles = [];
+                const colors = ["#4a9eff", "#10b981", "#06b6d4", "#8b5cf6", "#fbbf24", "#ec4899"];
+
+                class Particle {
+                    constructor(x, y) {
+                        this.x = x;
+                        this.y = y;
+                        this.vx = (Math.random() - 0.5) * 8;
+                        this.vy = (Math.random() - 0.5) * 8;
+                        this.alpha = 1;
+                        this.color = colors[Math.floor(Math.random() * colors.length)];
+                        this.size = Math.random() * 3 + 2;
+                    }
+
+                    update() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+                        this.vy += 0.15;
+                        this.alpha -= 0.008;
+                    }
+
+                    draw() {
+                        ctx.save();
+                        ctx.globalAlpha = this.alpha;
+                        ctx.fillStyle = this.color;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = this.color;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+
+                function createExplosion() {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * (canvas.height * 0.6);
+
+                    for (let i = 0; i < 50; i++) {
+                        particles.push(new Particle(x, y));
+                    }
+                }
+
+                function animate() {
+                    ctx.fillStyle = "rgba(10, 14, 26, 0.15)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    for (let i = particles.length - 1; i >= 0; i--) {
+                        particles[i].update();
+                        particles[i].draw();
+
+                        if (particles[i].alpha <= 0) {
+                            particles.splice(i, 1);
+                        }
+                    }
+
+                    if (particles.length > 0) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        canvas.style.display = "none";
+                    }
+                }
+
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(createExplosion, i * 400);
+                }
+
+                animate();
+            }
+
+            isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+
+            setLoading(loading) {
+                this.checkBtn.disabled = loading;
+                document.getElementById("btnText").style.display = loading ? "none" : "inline";
+                document.getElementById("btnLoader").style.display = loading ? "inline-block" : "none";
+            }
+
+            showError(message) {
+                this.resultsSection.style.display = "block";
+                this.resultsSection.innerHTML = `
+                    <div class="error-message">
+                        <strong>Error:</strong> ${message}
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn-back" onclick="location.reload()">Try Again</button>
+                    </div>
+                `;
+            }
+
+            sleep(ms) {
+                return new Promise((resolve) => setTimeout(resolve, ms));
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            new BreachChecker();
+        });
+    </script>
+</body>
+</html>
+
+

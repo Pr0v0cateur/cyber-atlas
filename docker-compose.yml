@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Database: PostgreSQL
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cyber_atlas}
+      POSTGRES_USER: ${POSTGRES_USER:-atlas_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-atlas_user}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Cache & Broker: Redis
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Search Engine: OpenSearch
+  # ---------------------------------------------------------------------------
+  opensearch:
+    image: opensearchproject/opensearch:2.11.1
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true # along with the memlock settings below
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD}
+    ports:
+      - "${OPENSEARCH_PORT:-9200}:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+  # ---------------------------------------------------------------------------
+  # API Service
+  # ---------------------------------------------------------------------------
+  api:
+    build: .
+    restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      opensearch:
+        condition: service_started
+    volumes:
+      - ./:/app
+      - ./logs:/app/logs
+
+  # ---------------------------------------------------------------------------
+  # Background Worker: Celery
+  # ---------------------------------------------------------------------------
+  celery_worker:
+    build: .
+    restart: always
+    command: celery -A app.tasks.celery_app worker --loglevel=info -Q collectors,scheduler,celery
+    env_file: .env
+    healthcheck:
+      disable: true
+    depends_on:
+      api:
+        # Wait for API to initialize DB/Migrations
+        condition: service_started
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+      - ./logs:/app/logs
+
+  # ---------------------------------------------------------------------------
+  # Task Scheduler: Celery Beat
+  # ---------------------------------------------------------------------------
+  celery_beat:
+    build: .
+    restart: always
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+    env_file: .env
+    healthcheck:
+      disable: true
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+      - ./logs:/app/logs
+
+  # ---------------------------------------------------------------------------
+  # Monitoring: Flower
+  # ---------------------------------------------------------------------------
+  flower:
+    build: .
+    restart: always
+    command: celery -A app.tasks.celery_app flower --port=5555 --basic_auth=${DEFAULT_ADMIN_EMAIL}:${DEFAULT_ADMIN_PASSWORD}
+    env_file: .env
+    ports:
+      - "5555:5555"
+    healthcheck:
+      disable: true
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+  opensearch_data:

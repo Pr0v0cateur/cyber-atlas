@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Atlas | Thread Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/login.css">
+    <style>
+        /* Critical CSS for loading state */
+        body { margin: 0; background: #000; overflow: hidden; }
+        .loading-screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; background: #000; transition: opacity 0.5s; }
+    </style>
+</head>
+<body>
+
+    <!-- Background Layers -->
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="nebula"></div>
+        <canvas id="particle-canvas"></canvas>
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+
+    <!-- Main Content -->
+    <header class="app-header">
+        <div class="logo">CYBER ATLAS</div>
+        <a href="#" class="contact-link">Contact Us</a>
+    </header>
+
+    <main class="login-container">
+        <!-- Text Content -->
+        <div class="hero-section">
+            <h2 class="fade-in delay-1">Introducing</h2>
+            <h1 class="main-title fade-in delay-2">CYBER ATLAS</h1>
+            <p class="subtitle fade-in delay-3">The Threat Intelligence Platform You Need</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card glass slide-up delay-4">
+            <h3 class="card-title">Welcome Back</h3>
+            <form id="login-form">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="input-icon">📧</span>
+                        <input type="email" id="email" placeholder="Email Address" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="login-btn">
+                    <span>ACCESS PLATFORM</span>
+                    <div class="btn-glow"></div>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <a href="#">Forgot Password?</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/login.js"></script>
+</body>
+</html>
+
+

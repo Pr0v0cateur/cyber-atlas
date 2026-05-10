@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malicious Domains | Cyber Atlas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/sidebar.css?v=20260129a">
+    <link rel="stylesheet" href="css/pages.css?v=20260129a">
+</head>
+
+<body class="page-shell">
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Malicious Domains</h1>
+                    <p>Domain indicators pulled from threat feeds.</p>
+                </div>
+            </header>
+
+            <section class="page-grid" id="domains-page">
+                <div class="page-card">
+                    <div class="page-card-header">
+                        <div>
+                            <h3>Latest Domain Indicators</h3>
+                            <p class="page-subtext">Domains reported across active feeds.</p>
+                        </div>
+                        <span class="page-meta" id="domains-meta"></span>
+                    </div>
+                    <div id="domains-table"></div>
+                    <div id="domains-pagination"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/sidebar.js?v=20260129a"></script>
+    <script src="js/page-utils.js?v=20260115b"></script>
+    <script src="js/pages.js?v=20260129a"></script>
+</body>
+
+</html>
+
+

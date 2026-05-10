@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Atlas | Thread Intelligence Platform</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Charts & Maps -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/dashboard.css?v=20260211a">
+    <link rel="stylesheet" href="css/sidebar.css?v=20260129a">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- Enhanced Sidebar (loaded by sidebar.js) -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Sidebar content injected by sidebar.js -->
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Top Header (Search & Actions) -->
+            <header class="top-header" id="section-search">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input id="global-search" type="text" placeholder="Search the platform...">
+                    <div id="search-suggestions" class="search-suggestions"></div>
+                </div>
+                <div class="header-actions">
+                    <i class="fa-regular fa-bell"></i>
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <i class="fa-solid fa-grid-2"></i>
+                </div>
+            </header>
+
+            <div id="breach-checker" class="breach-checker" data-endpoint="/api/breach/check">
+                <input id="breach-input" type="email" placeholder="Check email breach...">
+                <button id="breach-submit" type="button">Check</button>
+                <div id="breach-inline-error" class="breach-inline-error"></div>
+            </div>
+
+            <section id="breach-panel" class="breach-panel">
+                <div class="breach-panel-header">
+                    <div>
+                        <div id="breach-panel-title" class="breach-panel-title">Breach Results</div>
+                        <div id="breach-panel-subtitle" class="breach-panel-subtitle"></div>
+                    </div>
+                    <button id="breach-reset" class="breach-reset" type="button">Check another email</button>
+                </div>
+                <div id="breach-summary" class="breach-summary"></div>
+                <div id="breach-cards" class="breach-cards"></div>
+            </section>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+
+                <!-- Row 1: KPI Stats -->
+                <div class="kpi-row">
+                    <div class="kpi-card">
+                        <div class="kpi-title">THREAT ACTORS</div>
+                        <div class="kpi-value-group">
+                            <span class="value" id="count-actors">20</span>
+                            <span class="change negative" id="change-actors">-0 (24 hours)</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">INTRUSION SETS</div>
+                        <div class="kpi-value-group">
+                            <span class="value" id="count-intrusion">903</span>
+                            <span class="change positive" id="change-intrusion">+0 (24 hours)</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">CAMPAIGNS</div>
+                        <div class="kpi-value-group">
+                            <span class="value" id="count-campaigns">750</span>
+                            <span class="change positive" id="change-campaigns">+0 (24 hours)</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">MALWARE</div>
+                        <div class="kpi-value-group">
+                            <span class="value" id="count-malware">6.62K</span>
+                            <span class="change positive" id="change-malware">+0 (24 hours)</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">INDICATORS</div>
+                        <div class="kpi-value-group">
+                            <span class="value" id="count-indicators">430.62K</span>
+                            <span class="change positive" id="change-indicators">+0 (24 hours)</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">OBSERVABLES</div>
+                        <div class="kpi-value-group">
+                            <span class="value" id="count-observables">460.65K</span>
+                            <span class="change positive" id="change-observables">+0 (24 hours)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Map & Regional Stats -->
+                <div class="map-row">
+                    <!-- Left Column -->
+                    <div class="chart-card tall" id="section-targeted-regions">
+                        <div class="card-header">
+                            <h3>TARGETED REGIONS</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartTargetedRegions"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card tall" id="section-targeted-countries">
+                        <div class="card-header">
+                            <h3>TARGETED COUNTRIES</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartTargetedCountries"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Center Map -->
+                    <div class="map-card">
+                        <div class="card-header">
+                            <h3>TARGETED COUNTRIES (MAP)</h3>
+                        </div>
+                        <div class="card-body map-container">
+                            <div id="world-map"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="chart-card tall">
+                        <div class="card-header">
+                            <h3>ACTIVE INTRUSION SETS</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIntrusionSets"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card tall">
+                        <div class="card-header">
+                            <h3>ACTIVE MALWARE</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartActiveMalware"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Sectors & Tools -->
+                <div class="bottom-row">
+                    <div class="chart-card" id="section-active-vulns">
+                        <div class="card-header">
+                            <h3>TARGETED SECTORS</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartSectors"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>TARGETED SECTORS (TREND)</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartSectorsTrend"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>TARGETED REGIONS (HEATMAP)</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartRegionsHeatmap"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>ACTIVE VULNERABILITIES</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body list-view">
+                            <ul id="vuln-list" class="styled-list">
+                                <li><span>CVE-2023-11002</span> <span class="badge blue">214</span></li>
+                                <li><span>CVE-2023-0150</span> <span class="badge blue">157</span></li>
+                                <li><span>CVE-2023-0100</span> <span class="badge blue">145</span></li>
+                                <li><span>CVE-2023-27045</span> <span class="badge blue">138</span></li>
+                                <li><span>CVE-2023-26855</span> <span class="badge blue">131</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>ACTIVE TOOLS</h3>
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartTools"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Footer Stats -->
+                <div class="footer-row">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3>LATEST CAMPAIGNS</h3>
+                        </div>
+                        <div class="card-body" id="latest-campaigns">
+                            <div class="campaign-item">
+                                <div class="icon-circle">CA</div>
+                                <div class="details">
+                                    <h4>Loading...</h4>
+                                    <p>Fetching latest campaigns.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card wide" id="section-latest-reports">
+                        <div class="card-header">
+                            <h3>LATEST REPORTS</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="report-table">
+                                <tbody id="latest-reports">
+                                    <tr>
+                                        <td><i class="fa-regular fa-file"></i></td>
+                                        <td>Loading reports...</td>
+                                        <td>--</td>
+                                        <td><span class="tag">info</span></td>
+                                        <td><span class="btn-xs">VIEW</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="info-card" id="section-most-active-threats">
+                        <div class="card-header">
+                            <h3>MOST ACTIVE THREATS</h3>
+                        </div>
+                        <div class="card-body list-view">
+                            <ul id="most-active-threats" class="styled-list">
+                                <li><span>Loading threats...</span> <span class="val">--</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="chart-card" id="section-active-ttps">
+                        <div class="card-header">
+                            <h3>ACTIVE TTPs</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartTTPs"></canvas>
+                            <div id="chartTTPsLegend" class="chart-legend-custom"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3>INDICATORS SOURCES</h3>
+                        </div>
+                        <div class="card-body list-view">
+                            <ul id="indicator-sources" class="styled-list">
+                                <li><span>alienvault</span> <span class="val">0</span></li>
+                                <li><span>urlhaus</span> <span class="val">0</span></li>
+                                <li><span>threatfox</span> <span class="val">0</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- IOC Details Modal -->
+    <div id="ioc-modal" class="modal-overlay">
+        <div class="modal-content ioc-detail-modal">
+            <div class="modal-header">
+                <h2 id="modal-ioc-value">IOC Value</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modal-alert" class="modal-alert is-hidden"></div>
+
+                <div class="ioc-view">
+                    <div class="confidence-section">
+                        <p>This IP was reported <strong id="modal-report-count">0</strong> times. Confidence of Abuse is
+                            <strong id="modal-confidence-text">0%</strong>:
+                        </p>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="modal-confidence-bar" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="ioc-details-grid">
+                        <div class="detail-row">
+                            <span class="label">ISP</span>
+                            <span class="value" id="modal-isp">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Usage Type</span>
+                            <span class="value" id="modal-usage">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">ASN</span>
+                            <span class="value link" id="modal-asn">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Domain Name</span>
+                            <span class="value" id="modal-domain">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Country</span>
+                            <span class="value" id="modal-country">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">City</span>
+                            <span class="value" id="modal-city">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cve-view is-hidden">
+                    <div class="cve-cna-bar" id="cve-cna">CNA: -</div>
+                    <div class="cve-meta">
+                        <span>Published: <strong id="cve-published">-</strong></span>
+                        <span>Updated: <strong id="cve-updated">-</strong></span>
+                    </div>
+
+                    <div class="cve-section">
+                        <h4>Description</h4>
+                        <p id="cve-description">-</p>
+                    </div>
+
+                    <div class="cve-section">
+                        <h4>CVSS</h4>
+                        <table class="cve-table">
+                            <thead>
+                                <tr>
+                                    <th>Score</th>
+                                    <th>Severity</th>
+                                    <th>Version</th>
+                                    <th>Vector String</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cve-cvss-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="cve-section">
+                        <h4>Product Status</h4>
+                        <table class="cve-table">
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>Product</th>
+                                    <th>Versions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cve-products-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="cve-section">
+                        <h4>References</h4>
+                        <ul class="cve-references" id="cve-references"></ul>
+                    </div>
+                </div>
+
+                <div class="hash-view is-hidden">
+                    <div class="hash-summary">
+                        <div class="hash-score">
+                            <div class="hash-ring" id="hash-ring">
+                                <div class="hash-ring-center">
+                                    <div class="hash-detected" id="hash-detected">0</div>
+                                    <div class="hash-total" id="hash-total">/0</div>
+                                </div>
+                            </div>
+                            <div class="hash-score-label">Community Score</div>
+                            <div class="hash-community" id="hash-community">-</div>
+                        </div>
+
+                        <div class="hash-meta">
+                            <div class="hash-value" id="hash-value">-</div>
+                            <div class="hash-tags" id="hash-tags"></div>
+                            <div class="hash-meta-grid">
+                                <div>
+                                    <span class="label">Size</span>
+                                    <span class="value" id="hash-size">-</span>
+                                </div>
+                                <div>
+                                    <span class="label">Last Analysis Date</span>
+                                    <span class="value" id="hash-last-analysis">-</span>
+                                </div>
+                                <div>
+                                    <span class="label">Type</span>
+                                    <span class="value" id="hash-type">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hash-section">
+                        <div class="hash-section-title">Detection</div>
+                        <div class="hash-pill-row">
+                            <span class="hash-pill alert" id="hash-popular-label">-</span>
+                            <span class="hash-pill" id="hash-categories">-</span>
+                            <span class="hash-pill" id="hash-families">-</span>
+                        </div>
+                    </div>
+
+                    <div class="hash-section">
+                        <div class="hash-section-title">Security vendors' analysis</div>
+                        <table class="hash-vendor-table">
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>Result</th>
+                                    <th>Vendor</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hash-vendors-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="js/sidebar.js?v=20260129a"></script>
+    <script src="js/breach.js?v=20260113e"></script>
+    <script src="js/dashboard-charts.js?v=20260129b"></script>
+
+</body>
+
+</html>
+
+
