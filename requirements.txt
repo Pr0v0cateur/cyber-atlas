@@ -58,6 +58,6 @@ slowapi==0.1.9
 tenacity==8.2.3
 
 # === Threat Intel ===
-stix2==3.0.1
+stix2==3.0.2
 taxii2-client==2.3.0
 aiofiles==23.2.1
