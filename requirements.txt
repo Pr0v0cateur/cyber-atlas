@@ -7,7 +7,7 @@ pydantic-settings==2.5.2
 # === Database ===
 sqlalchemy==2.0.35
 psycopg[binary]==3.1.18
-alembic==1.13.3
+alembic==1.18.4
 asyncpg==0.29.0
 
 # === Search & Cache ===
