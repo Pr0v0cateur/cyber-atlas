@@ -42,7 +42,7 @@ dnspython==2.7.0
 
 # === Logging & Monitoring ===
 loguru==0.7.2
-prometheus-client==0.21.0
+prometheus-client==0.25.0
 
 # === Utilities ===
 python-dotenv==1.0.1
