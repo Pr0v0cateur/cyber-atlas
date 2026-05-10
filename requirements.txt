@@ -60,4 +60,4 @@ tenacity==8.2.3
 # === Threat Intel ===
 stix2==3.0.1
 taxii2-client==2.3.0
-aiofiles==23.2.1
+aiofiles==25.1.0
