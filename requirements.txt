@@ -29,7 +29,7 @@ cryptography==43.0.1
 # === HTTP & APIs ===
 httpx==0.27.2
 aiohttp==3.10.10
-requests==2.32.3
+requests==2.33.1
 
 # === Data Processing ===
 geoip2==4.8.0
